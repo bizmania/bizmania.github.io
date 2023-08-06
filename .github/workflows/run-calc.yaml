@@ -1,9 +1,9 @@
-name: Schedule run Calculator
+name: schedule-calculator
 
 on:
     schedule:
         # * is a special character in YAML so you have to quote this string
-        - cron:  '50 6-18/2 * * *'
+        - cron:  '55 6-18/2 * * *'
 
 jobs:
     test_schedule:
