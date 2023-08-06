@@ -1,0 +1,5 @@
+*.*
+!.gitignore
+!.env
+!.calc-bundle.js
+!package.json
