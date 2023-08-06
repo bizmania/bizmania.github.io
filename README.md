@@ -1,1 +1,1 @@
-# bizmania.github.io
+# bizmania
