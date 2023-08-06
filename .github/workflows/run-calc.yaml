@@ -14,7 +14,7 @@ jobs:
             with:
                 node-version: '14'
           - run: echo "NOW=$(TZ="Europe/Moscow" date +'%Y-%m-%d-%H')" >> $GITHUB_ENV
-          - run: cd ./scripts && npm run start
+          - run: cd ./scripts && npm run start calculator
           - run: cp ./scripts/calculator.json ./data/${{ env.NOW }}.json
           - run: /bin/cp -rf ./scripts/calculator.json ./data/latest.json
           - name: Add & Commit
