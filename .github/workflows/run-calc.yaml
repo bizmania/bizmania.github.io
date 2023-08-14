@@ -8,6 +8,7 @@ on:
 jobs:
     test_schedule:
         runs-on: ubuntu-latest
+        environment: schedule-calculator
         permissions:
           contents: write  
         steps:
