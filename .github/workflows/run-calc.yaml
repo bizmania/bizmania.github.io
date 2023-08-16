@@ -12,7 +12,7 @@ jobs:
         permissions:
           contents: write  
         steps:
-            - run: echo ${{ env.TEST_TEXT }}
+            - run: echo ${{ secrets.TEST_TEXT }}
             - run: echo $TEST_TEXT
             - run: echo "wow!"
 
