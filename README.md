@@ -1,5 +1,7 @@
 # bizmania
 
+Самый свежий калькулятор - https://bizmania.github.io/data/calculator.json
+
 # Next.js & NextUI Template
 
 This is a template for creating applications using Next.js 13 (app directory) and NextUI (v2).
