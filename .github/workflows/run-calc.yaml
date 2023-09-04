@@ -3,7 +3,7 @@ name: Scheduled Calculator
 on:
     workflow_dispatch:
     schedule:
-        - cron: "25 6-18/2 * * *"
+        - cron: "25 1 * * *"
 
 jobs:
     test_schedule:
