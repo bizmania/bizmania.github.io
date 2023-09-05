@@ -2,8 +2,6 @@
 
 import { useMemo } from "react";
 
-import { Input } from "@nextui-org/input";
-import { Kbd } from "@nextui-org/kbd";
 import { Link } from "@nextui-org/link";
 import {
     NavbarBrand,
@@ -18,44 +16,44 @@ import { link as linkStyles } from "@nextui-org/theme";
 import clsx from "clsx";
 import NextLink from "next/link";
 
-import { GithubIcon, SearchIcon } from "@/components/icons";
+import { GithubIcon } from "@/components/icons";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { siteConfig } from "@/config/site";
 
-const getColor = (index: number) =>
-    index === 2 ? "primary" : index === siteConfig.navMenuItems.length - 1 ? "danger" : "foreground";
+const getColor = (index: number) => (index < siteConfig.navMenuItems.length ? "primary" : "foreground");
+// index === 2 ? "primary" : index === siteConfig.navMenuItems.length - 1 ? "danger" : "foreground";
 
 export const Navbar = () => {
-    const searchInput = useMemo(
-        () => (
-            <Input
-                aria-label="Search"
-                classNames={{
-                    inputWrapper: "bg-default-100",
-                    input: "text-sm",
-                }}
-                endContent={
-                    <Kbd className="hidden lg:inline-block" keys={["command"]}>
-                        K
-                    </Kbd>
-                }
-                labelPlacement="outside"
-                placeholder="Search..."
-                startContent={<SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />}
-                type="search"
-            />
-        ),
-        []
-    );
+    // const searchInput = useMemo(
+    //     () => (
+    //         <Input
+    //             aria-label="Search"
+    //             classNames={{
+    //                 inputWrapper: "bg-default-100",
+    //                 input: "text-sm",
+    //             }}
+    //             endContent={
+    //                 <Kbd className="hidden lg:inline-block" keys={["command"]}>
+    //                     K
+    //                 </Kbd>
+    //             }
+    //             labelPlacement="outside"
+    //             placeholder="Search..."
+    //             startContent={<SearchIcon className="text-base text-default-400 pointer-events-none flex-shrink-0" />}
+    //             type="search"
+    //         />
+    //     ),
+    //     []
+    // );
 
     const menu = useMemo(
         () => (
             <NavbarMenu>
-                {searchInput}
+                {/* {searchInput} */}
                 <div className="mx-4 mt-2 flex flex-col gap-2">
                     {siteConfig.navMenuItems.map((item, index) => (
                         <NavbarMenuItem key={`${item}-${index}`}>
-                            <Link color={getColor(index)} href="#" size="lg">
+                            <Link color={getColor(index)} href={item.href} size="lg">
                                 {item.label}
                             </Link>
                         </NavbarMenuItem>
@@ -63,7 +61,7 @@ export const Navbar = () => {
                 </div>
             </NavbarMenu>
         ),
-        [searchInput]
+        []
     );
 
     return (

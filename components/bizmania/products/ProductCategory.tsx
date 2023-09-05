@@ -35,7 +35,7 @@ const ProductCategory: React.FC<ProductCategoryProps> = ({
     return (
         <div className="flex flex-col gap-2">
             {titleEl}
-            <div className="flex flex-row gap-1">{content}</div>
+            <div className="flex flex-row flex-wrap gap-1">{content}</div>
         </div>
     );
 };

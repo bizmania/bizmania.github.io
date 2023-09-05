@@ -1,3 +1,73 @@
+export enum SalaryStatus {
+    Max = "Max",
+    Up = "Up",
+    Unchanged = "-",
+    Down = "Down",
+    Min = "Min",
+}
+
+export interface AnalyticsCity {
+    countryName: string;
+    country: string;
+    cityId: number;
+    city: string;
+    level: number;
+    mayorId: number;
+    mayor: string;
+
+    population: number;
+    employment: number;
+    workers: number;
+    change: number; // Workers change
+    salary: number;
+    rate: number; // Salary rate
+    status: SalaryStatus; // Salary status
+    q: number; // Qualification
+    edu: number; // Education
+    eduCost: number; // Education cost
+}
+
+export interface CityInfo {
+    cityId: number;
+    groups: CityInfoRetailGroup[];
+}
+
+export interface CityInfoRetailGroup {
+    groupId: number;
+    group: string;
+    groupName: string;
+
+    turnover: number;
+    turnoverChange: number;
+    share: number;
+    margin: number;
+    competition: number;
+    priceLevel: number;
+
+    products: CityInfoRetailProduct[];
+}
+
+export interface CityInfoRetailProduct {
+    productId: number;
+    product: string;
+    productName: string;
+
+    volume: number;
+    volumeChange: number;
+    amount: number;
+    amountChange: number;
+    priceLevel: number;
+    sellers: number;
+    sellersChange: number;
+    divisions: number;
+    divisionsChange: number;
+    competition: number;
+    price: number;
+    priceChange: number;
+    quality: number;
+    qualityChange: number;
+}
+
 export interface CalcCityData {
     city: CalcCityItem;
     cityProducts: CalcProduce[];

@@ -72,15 +72,17 @@ export default function CalcCityPage() {
     const sortedItems = useMemo(() => sortCalcCityTable(items, sortDescriptor), [items, sortDescriptor]);
 
     useEffect(() => {
-        if (isSSR || calcData.length) {
+        if (isSSR) {
             return;
         }
-        const request = async () => {
+        (async () => {
+            if (calcData.length) {
+                return;
+            }
             await dataStorage.loadCalculator();
             setCalcData(dataStorage.calcData);
-        };
-        request();
-    }, [calcData.length, dataStorage, isSSR]);
+        })();
+    }, [calcData.length, cid, dataStorage, isSSR]);
 
     if (!calcData.length) {
         return <CircularProgress color="warning" aria-label="Загружаем..." />;

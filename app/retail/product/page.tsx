@@ -1,0 +1,283 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import { NumericFormat } from "react-number-format";
+
+import { CircularProgress, Image } from "@nextui-org/react";
+import { useIsSSR } from "@react-aria/ssr";
+import clsx from "clsx";
+import { useSearchParams } from "next/navigation";
+
+import { defaultSortRetailCityTable } from "@/app/retail/city/table";
+import { RetailProductTableRow, columnsRetailProductTable, sortRetailProductTable } from "@/app/retail/product/table";
+import BmTable, { BmTableProps } from "@/components/bizmania/table";
+import { title } from "@/components/primitives";
+import { BM_COUNTRIES } from "@/shared/countries";
+import { useDataStorage } from "@/shared/data/DataStorage";
+import { AnalyticsCity, CityInfo, CityInfoRetailProduct } from "@/shared/data/interfaces";
+import { BM_PRODUCTS } from "@/shared/products";
+import { COUNTRY_IMAGE_SRC, PRODUCT_IMAGE_SRC } from "@/shared/urls";
+
+export default function CalcProductPage() {
+    const isSSR = useIsSSR();
+    const searchParams = useSearchParams();
+    const id = searchParams.get("id");
+    const pid = Number(id);
+
+    const product = BM_PRODUCTS.find(({ id: productId }) => productId === pid);
+
+    const { dataStorage } = useDataStorage();
+    const [citiesInfo, setCitiesInfo] = useState<Map<number, CityInfo>>(new Map());
+    const [analyticsCities, setAnalyticsCities] = useState<Map<number, AnalyticsCity>>(new Map());
+
+    const items = useMemo((): RetailProductTableRow[] => {
+        if (!citiesInfo.size || !analyticsCities.size) {
+            return [];
+        }
+
+        return Array.from(analyticsCities.entries()).map(([cityId, analyticsCity]) => {
+            const cityInfo = citiesInfo.get(cityId)!;
+            const { city, population } = analyticsCity;
+
+            const product = cityInfo.groups.reduce((acc: CityInfoRetailProduct | undefined, group) => {
+                if (acc) {
+                    return acc;
+                }
+                return group.products.find(product => product.productId === pid);
+            }, undefined)!;
+
+            const { volume, volumeChange, amount, amountChange } = product;
+            // const cityProduct = cityProducts.find(({ productId: id }) => id === productId)!;
+
+            const noPQ = !product.price || !product.quality;
+            const priceQuality = noPQ ? 0 : round(product.price / product.quality);
+            const prevPriceQuality = noPQ
+                ? 0
+                : round((product.price - product.priceChange) / (product.quality - product.qualityChange));
+            const priceQualityChange = noPQ ? 0 : priceQuality - prevPriceQuality;
+
+            const volumePeople = round(volume / population);
+            const volumePeopleChange = round(volumeChange / population);
+
+            const amountPeople = round((1000 * amount) / population);
+            const amountPeopleChange = round(amountChange / population);
+
+            return {
+                cityId,
+                city,
+                ...product,
+                priceQuality,
+                priceQualityChange,
+                volumePeople,
+                volumePeopleChange,
+                amountPeople,
+                amountPeopleChange,
+            };
+        });
+    }, [analyticsCities, citiesInfo, pid]);
+
+    useEffect(() => {
+        if (isSSR) {
+            return;
+        }
+        (async () => {
+            if (citiesInfo.size) {
+                return;
+            }
+            const cities = await dataStorage.loadCities();
+            setCitiesInfo(cities);
+        })();
+        (async () => {
+            if (analyticsCities.size) {
+                return;
+            }
+            const cities = await dataStorage.loadAnalyticsCities();
+            setAnalyticsCities(cities);
+        })();
+    }, [analyticsCities.size, citiesInfo.size, dataStorage, isSSR]);
+
+    if (!citiesInfo.size || !analyticsCities.size) {
+        return <CircularProgress color="warning" aria-label="Загружаем..." />;
+    }
+
+    return (
+        <div className="flex flex-col gap-8 items-center justify-center w-full">
+            <div className="flex flex-row gap-4 items-center justify-center w-full">
+                <Image
+                    width={32}
+                    height={32}
+                    alt={product?.title}
+                    src={PRODUCT_IMAGE_SRC(product?.type ?? "")}
+                    radius="none"
+                    isBlurred
+                />
+                <h1 className={title()}>{product?.title}</h1>
+            </div>
+
+            <BmTable
+                columns={columnsRetailProductTable}
+                items={items}
+                renderCell={renderCell}
+                rowKey="product"
+                sorter={sortRetailProductTable}
+                defaultSort={defaultSortRetailCityTable}
+            />
+        </div>
+    );
+}
+
+const renderCell: BmTableProps<RetailProductTableRow>["renderCell"] = (row, columnKey) => {
+    const cellValue = row[columnKey];
+
+    switch (columnKey) {
+        case "city": {
+            const country = BM_COUNTRIES.find(({ cities }) => cities.some(({ id: cityId }) => cityId === row.cityId));
+
+            return (
+                <div className="flex flex-row gap-2 items-center ">
+                    <Image
+                        width={18}
+                        height={12}
+                        alt={country?.name}
+                        src={COUNTRY_IMAGE_SRC(country?.id ?? "")}
+                        radius="none"
+                        isBlurred
+                    />
+                    {cellValue}
+                </div>
+            );
+        }
+
+        case "price":
+        case "priceQuality":
+            if (!cellValue) {
+                return "-";
+            } else {
+                return (
+                    <NumericFormat
+                        className="whitespace-nowrap"
+                        value={cellValue}
+                        decimalScale={2}
+                        fixedDecimalScale
+                        decimalSeparator="."
+                        thousandSeparator=" "
+                        suffix=" ₽"
+                        allowNegative
+                        displayType="text"
+                    />
+                );
+            }
+
+        case "volume":
+            if (!cellValue) {
+                return "-";
+            } else {
+                return (
+                    <NumericFormat
+                        className="whitespace-nowrap"
+                        value={cellValue}
+                        decimalScale={0}
+                        fixedDecimalScale
+                        decimalSeparator="."
+                        thousandSeparator=" "
+                        suffix=" ₽"
+                        allowNegative
+                        displayType="text"
+                    />
+                );
+            }
+
+        case "quality":
+        case "volumePeople":
+        case "amountPeople":
+            if (!cellValue) {
+                return "-";
+            } else {
+                return (
+                    <NumericFormat
+                        className="whitespace-nowrap text-right items-end"
+                        value={cellValue}
+                        decimalScale={2}
+                        fixedDecimalScale
+                        decimalSeparator="."
+                        thousandSeparator=" "
+                        suffix=""
+                        allowNegative
+                        displayType="text"
+                    />
+                );
+            }
+
+        case "amount":
+        case "sellers":
+        case "divisions":
+            if (!cellValue) {
+                return "-";
+            } else {
+                return (
+                    <NumericFormat
+                        className="whitespace-nowrap"
+                        value={cellValue}
+                        decimalScale={0}
+                        fixedDecimalScale
+                        decimalSeparator="."
+                        thousandSeparator=" "
+                        suffix=""
+                        allowNegative
+                        displayType="text"
+                    />
+                );
+            }
+
+        case "volumeChange":
+        case "amountChange":
+            if (!cellValue) {
+                return "-";
+            } else {
+                const numVal = Number(cellValue);
+                return (
+                    <NumericFormat
+                        className={clsx(numVal > 0 ? "text-success" : "text-danger", "whitespace-nowrap", "text-right")}
+                        value={numVal}
+                        decimalScale={2}
+                        fixedDecimalScale
+                        decimalSeparator="."
+                        thousandSeparator=" "
+                        prefix={numVal > 0 ? "+" : ""}
+                        suffix=" %"
+                        allowNegative
+                        displayType="text"
+                    />
+                );
+            }
+
+        case "priceChange":
+        case "priceQualityChange":
+        case "qualityChange":
+        case "sellersChange":
+        case "divisionsChange":
+            if (!cellValue) {
+                return "-";
+            } else {
+                const numVal = Number(cellValue);
+                return (
+                    <NumericFormat
+                        className={clsx(numVal > 0 ? "text-success" : "text-danger", "whitespace-nowrap", "text-right")}
+                        value={numVal}
+                        decimalScale={2}
+                        fixedDecimalScale
+                        decimalSeparator="."
+                        thousandSeparator=" "
+                        prefix={numVal > 0 ? "+" : ""}
+                        suffix=""
+                        allowNegative
+                        displayType="text"
+                    />
+                );
+            }
+    }
+
+    return cellValue;
+};
+
+const round = (value: number): number => ~~(100 * value) / 100;

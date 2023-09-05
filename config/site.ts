@@ -12,11 +12,19 @@ export const siteConfig = {
             label: "Калькулятор",
             href: "/calc",
         },
+        {
+            label: "Розница",
+            href: "/retail",
+        },
     ],
     navMenuItems: [
         {
             label: "Калькулятор",
             href: "/calc",
+        },
+        {
+            label: "Розница",
+            href: "/retail",
         },
     ],
     links: {
