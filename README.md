@@ -1,6 +1,9 @@
 # bizmania
 
-Самый свежий калькулятор - https://bizmania.github.io/data/calculator.json
+* Самый свежий калькулятор - https://bizmania.github.io/data/calculator.json
+* Аналитика городов - https://bizmania.github.io/data/analytics_cities.json
+* Аналитика городской розницы - https://bizmania.github.io/data/city_<CITY_ID>.json
+
 
 # Next.js & NextUI Template
 
