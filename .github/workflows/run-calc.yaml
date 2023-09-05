@@ -24,7 +24,7 @@ jobs:
                   COOKIE_ATOKEN: ${{ secrets.COOKIE_ATOKEN }}
                   COOKIE_JSESSIONID: ${{ secrets.COOKIE_JSESSIONID }}
             - name: Copy calculator data
-              run: /bin/cp -rf ./scripts/calculator.json ./public/data/calculator.json
+              run: /bin/cp -rf ./scripts/*.json ./public/data/
             - name: Add & Commit
               uses: EndBug/add-and-commit@v9.1.3
               with:
