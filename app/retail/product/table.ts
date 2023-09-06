@@ -65,7 +65,9 @@ export const columnsRetailProductTable: BmTableColumn<RetailProductTableRow>[] =
     // { name: "Объем", uid: "amount", sortable: true, align: "end" },
     // { name: "📈", uid: "amountChange", sortable: true, align: "end" },
 
-    { name: "", uid: "competition", sortable: true, align: "end" },
+    { name: "🎚️", uid: "priceLevel", sortable: true, align: "end", title: "Уровень цен" },
+
+    { name: "🏪", uid: "competition", sortable: true, align: "end", title: "Конкуренция" },
 
     { name: "Отдел/млн", uid: "divisionPeople", sortable: true, align: "end", title: "Сумма продаж на 1млн человек" },
 

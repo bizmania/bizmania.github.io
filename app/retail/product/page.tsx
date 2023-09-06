@@ -251,6 +251,26 @@ const renderCell: BmTableProps<RetailProductTableRow>["renderCell"] = (row, colu
                 );
             }
 
+        case "priceLevel":
+            if (!cellValue) {
+                return "-";
+            } else {
+                const numVal = Number(cellValue);
+                return (
+                    <NumericFormat
+                        className={clsx("whitespace-nowrap", "text-right")}
+                        value={numVal}
+                        decimalScale={2}
+                        fixedDecimalScale
+                        decimalSeparator="."
+                        thousandSeparator=" "
+                        suffix=" %"
+                        allowNegative
+                        displayType="text"
+                    />
+                );
+            }
+
         case "volumeChange":
         case "amountChange":
             if (!cellValue) {
