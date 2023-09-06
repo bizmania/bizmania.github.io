@@ -6,6 +6,7 @@ import { NumericFormat } from "react-number-format";
 import {
     CircularProgress,
     Image,
+    Link,
     SortDescriptor,
     Table,
     TableBody,
@@ -22,7 +23,7 @@ import { title } from "@/components/primitives";
 import { BM_COUNTRIES } from "@/shared/countries";
 import { useDataStorage } from "@/shared/data/DataStorage";
 import { BM_PRODUCTS } from "@/shared/products";
-import { COUNTRY_IMAGE_SRC, PRODUCT_IMAGE_SRC } from "@/shared/urls";
+import { COUNTRY_IMAGE_SRC, PRODUCT_IMAGE_SRC, hrefCityCalcPage } from "@/shared/urls";
 
 export default function CalcProductPage() {
     const isSSR = useIsSSR();
@@ -131,7 +132,13 @@ const renderCell = (row: CalcProductTableRow, columnKey: React.Key) => {
                         radius="none"
                         isBlurred
                     />
-                    {cellValue}
+                    <Link
+                        href={hrefCityCalcPage(row.cityId)}
+                        className="whitespace-nowrap overflow-clip"
+                        title={String(cellValue)}
+                    >
+                        {cellValue}
+                    </Link>
                 </div>
             );
         }

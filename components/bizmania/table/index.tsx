@@ -35,6 +35,7 @@ function BmTable<T>({ columns, items, rowKey, defaultSort, sorter, renderCell }:
                         key={String(column.uid)}
                         align={column.align ?? "start"}
                         allowsSorting={column.sortable}
+                        className={headerClassname(column)}
                     >
                         <span title={column.title}>{column.name}</span>
                     </TableColumn>
@@ -60,6 +61,18 @@ function BmTable<T>({ columns, items, rowKey, defaultSort, sorter, renderCell }:
             </TableBody>
         </Table>
     );
+}
+
+function headerClassname<T>(column: BmTableColumn<T>): string {
+    switch (column.align) {
+        case "start":
+            return "text-left";
+        case "center":
+            return "text-center";
+        case "end":
+            return "text-right";
+    }
+    return "";
 }
 
 function cellClassname<T>(columns: BmTableColumn<T>[], columnKey: keyof T): string {

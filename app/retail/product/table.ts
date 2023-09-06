@@ -15,6 +15,8 @@ export interface RetailProductTableRow extends CityInfoRetailProduct {
 
     amountPeople: number;
     amountPeopleChange: number;
+
+    divisionPeople: number;
 }
 
 const getSortValue = (row: RetailProductTableRow, desc: SortDescriptor): number | string =>
@@ -57,11 +59,15 @@ export const columnsRetailProductTable: BmTableColumn<RetailProductTableRow>[] =
     { name: "ЦенаКач", uid: "priceQuality", sortable: true, align: "end" },
     { name: "📈", uid: "priceQualityChange", sortable: true, align: "end" },
 
-    { name: "Сумма", uid: "volume", sortable: true, align: "end" },
-    { name: "📈", uid: "volumeChange", sortable: true, align: "end" },
+    // { name: "Сумма", uid: "volume", sortable: true, align: "end" },
+    // { name: "📈", uid: "volumeChange", sortable: true, align: "end" },
 
-    { name: "Объем", uid: "amount", sortable: true, align: "end" },
-    { name: "📈", uid: "amountChange", sortable: true, align: "end" },
+    // { name: "Объем", uid: "amount", sortable: true, align: "end" },
+    // { name: "📈", uid: "amountChange", sortable: true, align: "end" },
+
+    { name: "", uid: "competition", sortable: true, align: "end" },
+
+    { name: "Отдел/млн", uid: "divisionPeople", sortable: true, align: "end", title: "Сумма продаж на 1млн человек" },
 
     { name: "₽/чел", uid: "volumePeople", sortable: true, align: "end", title: "Сумма продаж на 1 человека" },
     // { name: "📈", uid: "volumePeopleChange", sortable: true, align: "end" },

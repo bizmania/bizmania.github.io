@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { NumericFormat } from "react-number-format";
 
-import { CircularProgress, Image } from "@nextui-org/react";
+import { CircularProgress, Image, Link } from "@nextui-org/react";
 import { useIsSSR } from "@react-aria/ssr";
 import clsx from "clsx";
 import { useSearchParams } from "next/navigation";
@@ -16,7 +16,7 @@ import { BM_COUNTRIES } from "@/shared/countries";
 import { useDataStorage } from "@/shared/data/DataStorage";
 import { AnalyticsCity, CityInfo, CityInfoRetailProduct } from "@/shared/data/interfaces";
 import { BM_PRODUCTS } from "@/shared/products";
-import { COUNTRY_IMAGE_SRC, PRODUCT_IMAGE_SRC } from "@/shared/urls";
+import { COMPETITION_IMAGE_SRC, COUNTRY_IMAGE_SRC, PRODUCT_IMAGE_SRC, hrefCityRetailPage } from "@/shared/urls";
 
 export default function CalcProductPage() {
     const isSSR = useIsSSR();
@@ -46,7 +46,7 @@ export default function CalcProductPage() {
                 return group.products.find(product => product.productId === pid);
             }, undefined)!;
 
-            const { volume, volumeChange, amount, amountChange } = product;
+            const { volume, volumeChange, amount, amountChange, divisions, sellers } = product;
             // const cityProduct = cityProducts.find(({ productId: id }) => id === productId)!;
 
             const noPQ = !product.price || !product.quality;
@@ -62,6 +62,8 @@ export default function CalcProductPage() {
             const amountPeople = round((1000 * amount) / population);
             const amountPeopleChange = round(amountChange / population);
 
+            const divisionPeople = round((1_000_000 * (divisions ?? sellers)) / population);
+
             return {
                 cityId,
                 city,
@@ -72,6 +74,7 @@ export default function CalcProductPage() {
                 volumePeopleChange,
                 amountPeople,
                 amountPeopleChange,
+                divisionPeople,
             };
         });
     }, [analyticsCities, citiesInfo, pid]);
@@ -118,7 +121,7 @@ export default function CalcProductPage() {
                 columns={columnsRetailProductTable}
                 items={items}
                 renderCell={renderCell}
-                rowKey="product"
+                rowKey="cityId"
                 sorter={sortRetailProductTable}
                 defaultSort={defaultSortRetailCityTable}
             />
@@ -143,10 +146,28 @@ const renderCell: BmTableProps<RetailProductTableRow>["renderCell"] = (row, colu
                         radius="none"
                         isBlurred
                     />
-                    {cellValue}
+                    <Link
+                        href={hrefCityRetailPage(row.cityId)}
+                        className="whitespace-nowrap overflow-clip"
+                        title={String(cellValue)}
+                    >
+                        {cellValue}
+                    </Link>
                 </div>
             );
         }
+
+        case "competition":
+            return (
+                <Image
+                    width={18}
+                    height={12}
+                    alt={String(cellValue)}
+                    src={COMPETITION_IMAGE_SRC(cellValue)}
+                    radius="none"
+                    isBlurred
+                />
+            );
 
         case "price":
         case "priceQuality":
@@ -190,6 +211,7 @@ const renderCell: BmTableProps<RetailProductTableRow>["renderCell"] = (row, colu
         case "quality":
         case "volumePeople":
         case "amountPeople":
+        case "divisionPeople":
             if (!cellValue) {
                 return "-";
             } else {
@@ -234,7 +256,7 @@ const renderCell: BmTableProps<RetailProductTableRow>["renderCell"] = (row, colu
             if (!cellValue) {
                 return "-";
             } else {
-                const numVal = Number(cellValue);
+                const numVal = Number(cellValue) * 100;
                 return (
                     <NumericFormat
                         className={clsx(numVal > 0 ? "text-success" : "text-danger", "whitespace-nowrap", "text-right")}

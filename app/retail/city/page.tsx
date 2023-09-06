@@ -61,7 +61,7 @@ export default function CalcCityPage() {
                 const volumePeopleChange = round(volumeChange / population);
 
                 const amountPeople = round((1000 * amount) / population);
-                const amountPeopleChange = round(amountChange / population);
+                const amountPeopleChange = round((1000 * amountChange) / population);
 
                 return {
                     ...product,
@@ -269,7 +269,7 @@ const renderCell: BmTableProps<RetailCityTableRow>["renderCell"] = (row, columnK
             if (!cellValue) {
                 return "-";
             } else {
-                const numVal = Number(cellValue);
+                const numVal = Number(cellValue) * 100;
                 return (
                     <NumericFormat
                         className={clsx(numVal > 0 ? "text-success" : "text-danger", "whitespace-nowrap", "text-right")}
@@ -291,6 +291,8 @@ const renderCell: BmTableProps<RetailCityTableRow>["renderCell"] = (row, columnK
         case "qualityChange":
         case "sellersChange":
         case "divisionsChange":
+        case "volumePeopleChange":
+        case "amountPeopleChange":
             if (!cellValue) {
                 return "-";
             } else {
