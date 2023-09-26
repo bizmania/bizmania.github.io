@@ -15,6 +15,7 @@ import { title } from "@/components/primitives";
 import { BM_COUNTRIES } from "@/shared/countries";
 import { useDataStorage } from "@/shared/data/DataStorage";
 import { AnalyticsCity, CityInfo, CityInfoRetailProduct } from "@/shared/data/interfaces";
+import { notUndefined } from "@/shared/helpers/filters";
 import { BM_PRODUCTS } from "@/shared/products";
 import { COMPETITION_IMAGE_SRC, COUNTRY_IMAGE_SRC, PRODUCT_IMAGE_SRC, hrefCityRetailPage } from "@/shared/urls";
 
@@ -35,48 +36,54 @@ export default function CalcProductPage() {
             return [];
         }
 
-        return Array.from(analyticsCities.entries()).map(([cityId, analyticsCity]) => {
-            const cityInfo = citiesInfo.get(cityId)!;
-            const { city, population } = analyticsCity;
+        return Array.from(analyticsCities.entries())
+            .map(([cityId, analyticsCity]) => {
+                const cityInfo = citiesInfo.get(cityId)!;
+                const { city, population } = analyticsCity;
 
-            const product = cityInfo.groups.reduce((acc: CityInfoRetailProduct | undefined, group) => {
-                if (acc) {
-                    return acc;
+                const product = cityInfo.groups.reduce((acc: CityInfoRetailProduct | undefined, group) => {
+                    if (acc) {
+                        return acc;
+                    }
+                    return group.products.find(product => product.productId === pid);
+                }, undefined)!;
+
+                if (!product) {
+                    return;
                 }
-                return group.products.find(product => product.productId === pid);
-            }, undefined)!;
 
-            const { volume, volumeChange, amount, amountChange, divisions, sellers } = product;
-            // const cityProduct = cityProducts.find(({ productId: id }) => id === productId)!;
+                const { volume, volumeChange, amount, amountChange, divisions, sellers } = product;
+                // const cityProduct = cityProducts.find(({ productId: id }) => id === productId)!;
 
-            const noPQ = !product.price || !product.quality;
-            const priceQuality = noPQ ? 0 : round(product.price / product.quality);
-            const prevPriceQuality = noPQ
-                ? 0
-                : round((product.price - product.priceChange) / (product.quality - product.qualityChange));
-            const priceQualityChange = noPQ ? 0 : priceQuality - prevPriceQuality;
+                const noPQ = !product.price || !product.quality;
+                const priceQuality = noPQ ? 0 : round(product.price / product.quality);
+                const prevPriceQuality = noPQ
+                    ? 0
+                    : round((product.price - product.priceChange) / (product.quality - product.qualityChange));
+                const priceQualityChange = noPQ ? 0 : priceQuality - prevPriceQuality;
 
-            const volumePeople = round(volume / population);
-            const volumePeopleChange = round(volumeChange / population);
+                const volumePeople = round(volume / population);
+                const volumePeopleChange = round(volumeChange / population);
 
-            const amountPeople = round((1000 * amount) / population);
-            const amountPeopleChange = round(amountChange / population);
+                const amountPeople = round((1000 * amount) / population);
+                const amountPeopleChange = round(amountChange / population);
 
-            const divisionPeople = round((1_000_000 * (divisions ?? sellers)) / population);
+                const divisionPeople = round((1_000_000 * (divisions ?? sellers)) / population);
 
-            return {
-                cityId,
-                city,
-                ...product,
-                priceQuality,
-                priceQualityChange,
-                volumePeople,
-                volumePeopleChange,
-                amountPeople,
-                amountPeopleChange,
-                divisionPeople,
-            };
-        });
+                return {
+                    cityId,
+                    city,
+                    ...product,
+                    priceQuality,
+                    priceQualityChange,
+                    volumePeople,
+                    volumePeopleChange,
+                    amountPeople,
+                    amountPeopleChange,
+                    divisionPeople,
+                };
+            })
+            .filter(notUndefined);
     }, [analyticsCities, citiesInfo, pid]);
 
     useEffect(() => {

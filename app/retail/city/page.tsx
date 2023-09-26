@@ -20,6 +20,7 @@ import { title } from "@/components/primitives";
 import { BM_COUNTRIES } from "@/shared/countries";
 import { useDataStorage } from "@/shared/data/DataStorage";
 import { AnalyticsCity, CityInfo } from "@/shared/data/interfaces";
+import { notUndefined } from "@/shared/helpers/filters";
 import { COUNTRY_IMAGE_SRC, PRODUCT_IMAGE_SRC, hrefProductRetailPage } from "@/shared/urls";
 
 export default function CalcCityPage() {
@@ -46,33 +47,38 @@ export default function CalcCityPage() {
         const { population } = analyticsCity;
 
         return groups.map(group => {
-            const items = group.products.map((product): RetailCityTableRow => {
-                const { volume, volumeChange, amount, amountChange } = product;
-                // const cityProduct = cityProducts.find(({ productId: id }) => id === productId)!;
+            const items = group.products
+                .map((product): RetailCityTableRow | undefined => {
+                    const { volume, volumeChange, amount, amountChange } = product;
+                    // const cityProduct = cityProducts.find(({ productId: id }) => id === productId)!;
+                    if (!product) {
+                        return;
+                    }
 
-                const noPQ = !product.price || !product.quality;
-                const priceQuality = noPQ ? 0 : round(product.price / product.quality);
-                const prevPriceQuality = noPQ
-                    ? 0
-                    : round((product.price - product.priceChange) / (product.quality - product.qualityChange));
-                const priceQualityChange = noPQ ? 0 : priceQuality - prevPriceQuality;
+                    const noPQ = !product.price || !product.quality;
+                    const priceQuality = noPQ ? 0 : round(product.price / product.quality);
+                    const prevPriceQuality = noPQ
+                        ? 0
+                        : round((product.price - product.priceChange) / (product.quality - product.qualityChange));
+                    const priceQualityChange = noPQ ? 0 : priceQuality - prevPriceQuality;
 
-                const volumePeople = round(volume / population);
-                const volumePeopleChange = round(volumeChange / population);
+                    const volumePeople = round(volume / population);
+                    const volumePeopleChange = round(volumeChange / population);
 
-                const amountPeople = round((1000 * amount) / population);
-                const amountPeopleChange = round((1000 * amountChange) / population);
+                    const amountPeople = round((1000 * amount) / population);
+                    const amountPeopleChange = round((1000 * amountChange) / population);
 
-                return {
-                    ...product,
-                    priceQuality,
-                    priceQualityChange,
-                    volumePeople,
-                    volumePeopleChange,
-                    amountPeople,
-                    amountPeopleChange,
-                };
-            });
+                    return {
+                        ...product,
+                        priceQuality,
+                        priceQualityChange,
+                        volumePeople,
+                        volumePeopleChange,
+                        amountPeople,
+                        amountPeopleChange,
+                    };
+                })
+                .filter(notUndefined);
 
             return {
                 group,
