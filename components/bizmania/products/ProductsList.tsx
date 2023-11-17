@@ -3,18 +3,24 @@
 import { useMemo } from "react";
 
 import ProductCategory from "@/components/bizmania/products/ProductCategory";
-import { BM_CATEGORY_PRODUCTS } from "@/shared/products";
+import { BmCategoryProducts } from "@/shared/products";
 
 interface ProductsListProps {
+    products: BmCategoryProducts[];
     showTitles?: boolean;
     href?: (id: number, type: string) => string;
     onClick?: (id: number, type: string) => void;
 }
 
-const ProductsList: React.FC<ProductsListProps> = ({ href, onClick, showTitles = false }: ProductsListProps) => {
+const ProductsList: React.FC<ProductsListProps> = ({
+    products,
+    href,
+    onClick,
+    showTitles = false,
+}: ProductsListProps) => {
     const content = useMemo(
         () =>
-            BM_CATEGORY_PRODUCTS.map(({ category, products }) => (
+            products.map(({ category, products }) => (
                 <ProductCategory
                     key={category.id}
                     category={category}
@@ -24,7 +30,7 @@ const ProductsList: React.FC<ProductsListProps> = ({ href, onClick, showTitles =
                     onClick={onClick}
                 />
             )),
-        [href, onClick, showTitles]
+        [href, onClick, products, showTitles]
     );
 
     return <div className="flex flex-col gap-4">{content}</div>;

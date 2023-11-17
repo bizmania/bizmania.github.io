@@ -16,7 +16,7 @@ import { BM_COUNTRIES } from "@/shared/countries";
 import { useDataStorage } from "@/shared/data/DataStorage";
 import { AnalyticsCity, CityInfo, CityInfoRetailProduct } from "@/shared/data/interfaces";
 import { notUndefined } from "@/shared/helpers/filters";
-import { BM_PRODUCTS } from "@/shared/products";
+import { BM_PRODUCTS_RETAIL } from "@/shared/products";
 import { COMPETITION_IMAGE_SRC, COUNTRY_IMAGE_SRC, PRODUCT_IMAGE_SRC, hrefCityRetailPage } from "@/shared/urls";
 
 export default function CalcProductPage() {
@@ -25,7 +25,7 @@ export default function CalcProductPage() {
     const id = searchParams.get("id");
     const pid = Number(id);
 
-    const product = BM_PRODUCTS.find(({ id: productId }) => productId === pid);
+    const product = BM_PRODUCTS_RETAIL.find(({ id: productId }) => productId === pid);
 
     const { dataStorage } = useDataStorage();
     const [citiesInfo, setCitiesInfo] = useState<Map<number, CityInfo>>(new Map());

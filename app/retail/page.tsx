@@ -4,6 +4,7 @@ import ProductsList from "@/components/bizmania/products/ProductsList";
 import CountriesList from "@/components/bizmania/world/CountriesList";
 import { title } from "@/components/primitives";
 import { BM_COUNTRIES } from "@/shared/countries";
+import { BM_CATEGORY_RETAIL_PRODUCTS } from "@/shared/products";
 import { hrefCityRetailPage, hrefProductRetailPage } from "@/shared/urls";
 
 export default function CalcPage() {
@@ -12,7 +13,7 @@ export default function CalcPage() {
             <h1 className={title()}>Розница</h1>
 
             <div className="flex flex-row items-start justify-center gap-4">
-                <ProductsList href={hrefProductRetailPage} showTitles />
+                <ProductsList products={BM_CATEGORY_RETAIL_PRODUCTS} href={hrefProductRetailPage} showTitles />
                 <CountriesList countries={BM_COUNTRIES} href={hrefCityRetailPage} showTitles />
             </div>
         </div>

@@ -16,6 +16,8 @@ export const BM_CATEGORIES = [
     { id: 11, title: "Электроника" },
 ];
 
+export const BM_CATEGORIES_RETAIL = [...BM_CATEGORIES, { id: 99, title: "Рестораны" }];
+
 export const BM_PRODUCTS = [
     { id: 159, type: "car", title: "Автомобиль", categoryId: 19 },
     { id: 375, type: "battery", title: "Аккумулятор", categoryId: 19 },
@@ -257,6 +259,125 @@ export const BM_PRODUCTS = [
     { id: 261, type: "energy", title: "Электроэнергия", categoryId: 12 },
 ];
 
+export const BM_PRODUCTS_RETAIL = [
+    ...BM_PRODUCTS,
+    { id: 275, title: "Борщ", type: "borcht", categoryId: 99 },
+    {
+        id: 294,
+        title: "Винегрет",
+        categoryId: 99,
+        type: "venigret",
+    },
+    {
+        id: 296,
+        title: "Гамбургер",
+        categoryId: 99,
+        type: "hamburger",
+    },
+    {
+        id: 392,
+        title: "Глинтвейн",
+        categoryId: 99,
+        type: "alkococteil",
+    },
+    {
+        id: 286,
+        title: "Жареная рыба",
+        categoryId: 99,
+        type: "friedfish",
+    },
+    {
+        id: 389,
+        title: "Запеканка",
+        categoryId: 99,
+        type: "frenchfries",
+    },
+    {
+        id: 385,
+        title: "Итальянское ассорти",
+        categoryId: 99,
+        type: "potatomeat",
+    },
+    {
+        id: 393,
+        title: "Молочный коктейль",
+        categoryId: 99,
+        type: "juicecocteil",
+    },
+    {
+        id: 283,
+        title: "Мясо по-французски",
+        categoryId: 99,
+        type: "frenchmeat",
+    },
+    {
+        id: 390,
+        title: "Пивной сет",
+        categoryId: 99,
+        type: "nuggets",
+    },
+    {
+        id: 298,
+        title: "Пицца",
+        categoryId: 99,
+        type: "pizza",
+    },
+    {
+        id: 284,
+        title: "Плов",
+        categoryId: 99,
+        type: "pilaf",
+    },
+    {
+        id: 386,
+        title: "Ребрышки по-фламандски",
+        categoryId: 99,
+        type: "ase",
+    },
+    {
+        id: 293,
+        title: "Салат Греческий",
+        categoryId: 99,
+        type: "saladgreece",
+    },
+    {
+        id: 290,
+        title: "Салат Столичный",
+        categoryId: 99,
+        type: "saladcapital",
+    },
+    {
+        id: 388,
+        title: "Сельдь под шубой",
+        categoryId: 99,
+        type: "saladceasar",
+    },
+    {
+        id: 391,
+        title: "Сидр",
+        categoryId: 99,
+        type: "compote",
+    },
+    {
+        id: 276,
+        title: "Солянка",
+        categoryId: 99,
+        type: "saltwort",
+    },
+    {
+        id: 302,
+        title: "Шаурма",
+        categoryId: 99,
+        type: "shawarma",
+    },
+    {
+        id: 387,
+        title: "Штрудель",
+        categoryId: 99,
+        type: "schnitzel",
+    },
+];
+
 export type BmCategory = (typeof BM_CATEGORIES)[number];
 export type BmProduct = (typeof BM_PRODUCTS)[number];
 export type BmCategoryProducts = {
@@ -266,6 +387,12 @@ export type BmCategoryProducts = {
 
 export const BM_CATEGORY_PRODUCTS = BM_CATEGORIES.reduce((acc, category) => {
     const products = BM_PRODUCTS.filter(product => product.categoryId === category.id);
+    acc.push({ category, products });
+    return acc;
+}, [] as BmCategoryProducts[]);
+
+export const BM_CATEGORY_RETAIL_PRODUCTS = BM_CATEGORIES_RETAIL.reduce((acc, category) => {
+    const products = BM_PRODUCTS_RETAIL.filter(product => product.categoryId === category.id);
     acc.push({ category, products });
     return acc;
 }, [] as BmCategoryProducts[]);
