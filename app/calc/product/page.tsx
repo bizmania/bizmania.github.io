@@ -15,20 +15,18 @@ import {
     TableHeader,
     TableRow,
 } from "@nextui-org/react";
-import { useIsSSR } from "@react-aria/ssr";
 import { useSearchParams } from "next/navigation";
 import useSWR from "swr";
 
 import { CalcProductTableRow, columnsCalcProductTable, sortCalcProductTable } from "@/app/calc/product/table";
 import { title } from "@/components/primitives";
-import { URL_ANALYTICS_CITIES, useDataStorage } from "@/shared/data/DataStorage";
-import { AnalyticsCity } from "@/shared/data/interfaces";
+import { URL_ANALYTICS_CITIES, URL_CALCULATOR, useDataStorage } from "@/shared/data/DataStorage";
+import { AnalyticsCity, CalcCityData } from "@/shared/data/interfaces";
 import { fetcher } from "@/shared/fetcher";
 import { BM_PRODUCTS } from "@/shared/products";
 import { COUNTRY_IMAGE_SRC, PRODUCT_IMAGE_SRC, hrefCityCalcPage } from "@/shared/urls";
 
 export default function CalcProductPage() {
-    const isSSR = useIsSSR();
     const searchParams = useSearchParams();
     const id = searchParams.get("id");
     const pid = Number(id);
@@ -37,14 +35,19 @@ export default function CalcProductPage() {
 
     const { dataStorage } = useDataStorage();
     const { data, error, isLoading } = useSWR<AnalyticsCity[]>(URL_ANALYTICS_CITIES, fetcher);
-    const [calcData, setCalcData] = useState(dataStorage.calcData);
+    const {
+        data: calcData,
+        error: calcError,
+        isLoading: calcIsLoading,
+    } = useSWR<CalcCityData[]>(URL_CALCULATOR, fetcher);
+
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
         column: "cityId",
         direction: "ascending",
     });
 
     const items = useMemo((): CalcProductTableRow[] => {
-        if (!calcData.length) {
+        if (!calcData?.length || calcIsLoading) {
             return [];
         }
         return calcData.map(({ city, cityProducts }) => {
@@ -64,20 +67,9 @@ export default function CalcProductPage() {
                 retail,
             };
         });
-    }, [calcData, pid]);
+    }, [calcData, calcIsLoading, pid]);
 
     const sortedItems = useMemo(() => sortCalcProductTable(items, sortDescriptor), [items, sortDescriptor]);
-
-    useEffect(() => {
-        if (isSSR || calcData.length) {
-            return;
-        }
-        const request = async () => {
-            await dataStorage.loadCalculator();
-            setCalcData(dataStorage.calcData);
-        };
-        request();
-    }, [calcData.length, dataStorage, isSSR]);
 
     useEffect(() => {
         if (!isLoading && data) {
@@ -85,8 +77,8 @@ export default function CalcProductPage() {
         }
     }, [isLoading, dataStorage, data]);
 
-    if (error) return <div>failed to load</div>;
-    if (!calcData.length || isLoading) {
+    if (error || calcError) return <div>failed to load</div>;
+    if (isLoading || calcIsLoading) {
         return <CircularProgress color="warning" aria-label="Загружаем..." />;
     }
 

@@ -38,9 +38,13 @@ export default function CalcProductPage() {
             return [];
         }
 
-        return Array.from(data.entries())
-            .map(([cityId, analyticsCity]) => {
-                const cityInfo = citiesInfo.get(cityId)!;
+        return data
+            .map(analyticsCity => {
+                const { cityId } = analyticsCity;
+                const cityInfo = citiesInfo.get(cityId);
+                if (!cityInfo) {
+                    return;
+                }
                 const { city, population } = analyticsCity;
 
                 const product = cityInfo.groups.reduce((acc: CityInfoRetailProduct | undefined, group) => {
