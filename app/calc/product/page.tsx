@@ -17,11 +17,13 @@ import {
 } from "@nextui-org/react";
 import { useIsSSR } from "@react-aria/ssr";
 import { useSearchParams } from "next/navigation";
+import useSWR from "swr";
 
 import { CalcProductTableRow, columnsCalcProductTable, sortCalcProductTable } from "@/app/calc/product/table";
 import { title } from "@/components/primitives";
-import { BM_COUNTRIES } from "@/shared/countries";
-import { useDataStorage } from "@/shared/data/DataStorage";
+import { URL_ANALYTICS_CITIES, useDataStorage } from "@/shared/data/DataStorage";
+import { AnalyticsCity } from "@/shared/data/interfaces";
+import { fetcher } from "@/shared/fetcher";
 import { BM_PRODUCTS } from "@/shared/products";
 import { COUNTRY_IMAGE_SRC, PRODUCT_IMAGE_SRC, hrefCityCalcPage } from "@/shared/urls";
 
@@ -34,6 +36,7 @@ export default function CalcProductPage() {
     const product = BM_PRODUCTS.find(({ id: productId }) => productId === pid);
 
     const { dataStorage } = useDataStorage();
+    const { data, error, isLoading } = useSWR<AnalyticsCity[]>(URL_ANALYTICS_CITIES, fetcher);
     const [calcData, setCalcData] = useState(dataStorage.calcData);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
         column: "cityId",
@@ -76,7 +79,14 @@ export default function CalcProductPage() {
         request();
     }, [calcData.length, dataStorage, isSSR]);
 
-    if (!calcData.length) {
+    useEffect(() => {
+        if (!isLoading && data) {
+            dataStorage.setAnalyticsCities(data);
+        }
+    }, [isLoading, dataStorage, data]);
+
+    if (error) return <div>failed to load</div>;
+    if (!calcData.length || isLoading) {
         return <CircularProgress color="warning" aria-label="Загружаем..." />;
     }
 
@@ -105,7 +115,7 @@ export default function CalcProductPage() {
                 <TableBody emptyContent={"Нет данных"} items={sortedItems}>
                     {item => (
                         <TableRow key={item.city}>
-                            {columnKey => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                            {columnKey => <TableCell>{RenderCell(item, columnKey)}</TableCell>}
                         </TableRow>
                     )}
                 </TableBody>
@@ -114,13 +124,17 @@ export default function CalcProductPage() {
     );
 }
 
-const renderCell = (row: CalcProductTableRow, columnKey: React.Key) => {
+const RenderCell = (row: CalcProductTableRow, columnKey: React.Key) => {
+    const { dataStorage } = useDataStorage();
+
     const key = columnKey as keyof CalcProductTableRow;
     const cellValue = row[key];
 
     switch (key) {
         case "city": {
-            const country = BM_COUNTRIES.find(({ cities }) => cities.some(({ id: cityId }) => cityId === row.cityId));
+            const country = dataStorage.countries.find(({ cities }) =>
+                cities.some(({ id: cityId }) => cityId === row.cityId)
+            );
 
             return (
                 <div className="flex flex-row gap-2 items-center ">

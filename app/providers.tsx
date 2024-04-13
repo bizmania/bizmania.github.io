@@ -7,8 +7,8 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { ThemeProviderProps } from "next-themes/dist/types";
 
 export interface ProvidersProps {
-    children: React.ReactNode;
-    themeProps?: ThemeProviderProps;
+    children?: React.ReactNode;
+    themeProps?: Omit<ThemeProviderProps, "children">;
 }
 
 export function Providers({ children, themeProps }: ProvidersProps) {

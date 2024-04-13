@@ -7,6 +7,7 @@ import { CircularProgress, Image, Link } from "@nextui-org/react";
 import { useIsSSR } from "@react-aria/ssr";
 import clsx from "clsx";
 import { useSearchParams } from "next/navigation";
+import useSWR from "swr";
 
 import {
     RetailCityTable,
@@ -17,9 +18,9 @@ import {
 } from "@/app/retail/city/table";
 import BmTable, { BmTableProps } from "@/components/bizmania/table";
 import { title } from "@/components/primitives";
-import { BM_COUNTRIES } from "@/shared/countries";
-import { useDataStorage } from "@/shared/data/DataStorage";
+import { URL_ANALYTICS_CITIES, useDataStorage } from "@/shared/data/DataStorage";
 import { AnalyticsCity, CityInfo } from "@/shared/data/interfaces";
+import { fetcher } from "@/shared/fetcher";
 import { notUndefined } from "@/shared/helpers/filters";
 import { COUNTRY_IMAGE_SRC, PRODUCT_IMAGE_SRC, hrefProductRetailPage } from "@/shared/urls";
 
@@ -29,10 +30,8 @@ export default function CalcCityPage() {
     const id = searchParams.get("id");
     const cid = Number(id);
 
-    const country = BM_COUNTRIES.find(({ cities }) => cities.some(({ id: cityId }) => cityId === cid))!;
-    const city = country.cities.find(({ id: cityId }) => cityId === cid)!;
-
     const { dataStorage } = useDataStorage();
+    const { data, error, isLoading } = useSWR<AnalyticsCity[]>(URL_ANALYTICS_CITIES, fetcher);
     // const [calcData, setCalcData] = useState(dataStorage.calcData);
     const [cityInfo, setCityInfo] = useState<CityInfo>();
     const [analyticsCity, setAnalyticsCity] = useState<AnalyticsCity>();
@@ -114,9 +113,19 @@ export default function CalcCityPage() {
         })();
     }, [analyticsCity, cid, cityInfo, dataStorage, isSSR]);
 
-    if (!cityInfo) {
+    useEffect(() => {
+        if (!isLoading && data) {
+            dataStorage.setAnalyticsCities(data);
+        }
+    }, [isLoading, data, dataStorage]);
+
+    if (error) return <div>failed to load</div>;
+    if (!cityInfo || isLoading) {
         return <CircularProgress color="warning" aria-label="Загружаем..." />;
     }
+
+    const country = dataStorage.countries.find(({ cities }) => cities.some(({ id: cityId }) => cityId === cid))!;
+    const city = country.cities.find(({ id: cityId }) => cityId === cid)!;
 
     return (
         <div className="flex flex-col gap-8 items-center justify-center w-full">

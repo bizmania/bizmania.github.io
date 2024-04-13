@@ -36,7 +36,7 @@ export interface BmCity {
     icons: BmCityIcon[];
 }
 
-export const BM_COUNTRIES: BmCountry[] = [
+export const BM_COUNTRIES_OFF: BmCountry[] = [
     {
         id: "russia",
         visible: true,

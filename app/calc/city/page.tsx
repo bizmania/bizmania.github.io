@@ -17,11 +17,13 @@ import {
 } from "@nextui-org/react";
 import { useIsSSR } from "@react-aria/ssr";
 import { useSearchParams } from "next/navigation";
+import useSWR from "swr";
 
 import { CalcCityTableRow, columnsCalcCityTable, sortCalcCityTable } from "@/app/calc/city/table";
 import { title } from "@/components/primitives";
-import { BM_COUNTRIES } from "@/shared/countries";
-import { useDataStorage } from "@/shared/data/DataStorage";
+import { URL_ANALYTICS_CITIES, useDataStorage } from "@/shared/data/DataStorage";
+import { AnalyticsCity } from "@/shared/data/interfaces";
+import { fetcher } from "@/shared/fetcher";
 import { BM_PRODUCTS } from "@/shared/products";
 import { COUNTRY_IMAGE_SRC, PRODUCT_IMAGE_SRC, hrefProductCalcPage } from "@/shared/urls";
 
@@ -31,10 +33,8 @@ export default function CalcCityPage() {
     const id = searchParams.get("id");
     const cid = Number(id);
 
-    const country = BM_COUNTRIES.find(({ cities }) => cities.some(({ id: cityId }) => cityId === cid))!;
-    const city = country.cities.find(({ id: cityId }) => cityId === cid)!;
-
     const { dataStorage } = useDataStorage();
+    const { data, error, isLoading } = useSWR<AnalyticsCity[]>(URL_ANALYTICS_CITIES, fetcher);
     const [calcData, setCalcData] = useState(dataStorage.calcData);
     const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
         column: "productId",
@@ -84,9 +84,19 @@ export default function CalcCityPage() {
         })();
     }, [calcData.length, cid, dataStorage, isSSR]);
 
-    if (!calcData.length) {
+    useEffect(() => {
+        if (!isLoading && data) {
+            dataStorage.setAnalyticsCities(data);
+        }
+    }, [isLoading, dataStorage, data]);
+
+    if (error) return <div>failed to load</div>;
+    if (!calcData.length || isLoading) {
         return <CircularProgress color="warning" aria-label="Загружаем..." />;
     }
+
+    const country = dataStorage.countries.find(({ cities }) => cities.some(({ id: cityId }) => cityId === cid))!;
+    const city = country.cities.find(({ id: cityId }) => cityId === cid)!;
 
     return (
         <div className="flex flex-col gap-8 items-center justify-center w-full">

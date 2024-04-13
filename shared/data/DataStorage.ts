@@ -1,10 +1,11 @@
 import { createContext, useContext } from "react";
 
+import { BmCity, BmCountry } from "@/shared/countries";
 import type { AnalyticsCity, CalcCityData, CityInfo } from "@/shared/data/interfaces";
 
-const URL_CALCULATOR = "/data/calculator.json";
-const URL_ANALYTICS_CITIES = "/data/analytics_cities.json";
-const URL_CITY = (cityId: number) => `/data/city_${cityId}.json`;
+export const URL_CALCULATOR = "/data/calculator.json";
+export const URL_ANALYTICS_CITIES = "/data/analytics_cities.json";
+export const URL_CITY = (cityId: number) => `/data/city_${cityId}.json`;
 
 interface DataStorageValues {
     dataStorage: DataStorage;
@@ -16,6 +17,42 @@ class DataStorage {
     public analyticsCities: Map<number, AnalyticsCity> = new Map();
 
     constructor() {}
+
+    public get countries(): BmCountry[] {
+        return Array.from(this.analyticsCities.values()).reduce((acc, bmCity) => {
+            if (!acc.some(country => country.id === bmCity.countryName)) {
+                acc.push({
+                    id: bmCity.countryName,
+                    name: bmCity.country,
+                    cities: [],
+                    visible: true,
+                    areas: [],
+                    color: "",
+                    intId: 0,
+                    population: "",
+                    landArea: "",
+                    level: 0,
+                });
+            }
+
+            const country = acc.find(country => country.id === bmCity.countryName)!;
+            const city: BmCity = {
+                id: bmCity.cityId,
+                name: bmCity.city,
+                population: String(bmCity.population),
+                latitude: 0,
+                longitude: 0,
+                level: bmCity.level,
+                region: "",
+                resources: "",
+                crops: "",
+                icons: [],
+            };
+            country.cities.push(city);
+
+            return acc;
+        }, [] as BmCountry[]);
+    }
 
     public async loadCalculator(force = false): Promise<CalcCityData[]> {
         if (!this.calcData.length || force) {
@@ -55,6 +92,12 @@ class DataStorage {
         }
 
         return (await this.loadAnalyticsCities(force)).get(cityId)!;
+    }
+
+    public setAnalyticsCities(cities: AnalyticsCity[]): void {
+        cities.forEach(city => {
+            this.analyticsCities.set(city.cityId, city);
+        });
     }
 
     public async loadAnalyticsCities(force = false): Promise<Map<number, AnalyticsCity>> {

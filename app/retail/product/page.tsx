@@ -7,14 +7,15 @@ import { CircularProgress, Image, Link } from "@nextui-org/react";
 import { useIsSSR } from "@react-aria/ssr";
 import clsx from "clsx";
 import { useSearchParams } from "next/navigation";
+import useSWR from "swr";
 
 import { defaultSortRetailCityTable } from "@/app/retail/city/table";
 import { RetailProductTableRow, columnsRetailProductTable, sortRetailProductTable } from "@/app/retail/product/table";
 import BmTable, { BmTableProps } from "@/components/bizmania/table";
 import { title } from "@/components/primitives";
-import { BM_COUNTRIES } from "@/shared/countries";
-import { useDataStorage } from "@/shared/data/DataStorage";
+import { URL_ANALYTICS_CITIES, useDataStorage } from "@/shared/data/DataStorage";
 import { AnalyticsCity, CityInfo, CityInfoRetailProduct } from "@/shared/data/interfaces";
+import { fetcher } from "@/shared/fetcher";
 import { notUndefined } from "@/shared/helpers/filters";
 import { BM_PRODUCTS_RETAIL } from "@/shared/products";
 import { COMPETITION_IMAGE_SRC, COUNTRY_IMAGE_SRC, PRODUCT_IMAGE_SRC, hrefCityRetailPage } from "@/shared/urls";
@@ -28,15 +29,16 @@ export default function CalcProductPage() {
     const product = BM_PRODUCTS_RETAIL.find(({ id: productId }) => productId === pid);
 
     const { dataStorage } = useDataStorage();
+    const { data, error, isLoading } = useSWR<AnalyticsCity[]>(URL_ANALYTICS_CITIES, fetcher);
     const [citiesInfo, setCitiesInfo] = useState<Map<number, CityInfo>>(new Map());
-    const [analyticsCities, setAnalyticsCities] = useState<Map<number, AnalyticsCity>>(new Map());
+    // const [analyticsCities, setAnalyticsCities] = useState<Map<number, AnalyticsCity>>(new Map());
 
     const items = useMemo((): RetailProductTableRow[] => {
-        if (!citiesInfo.size || !analyticsCities.size) {
+        if (!citiesInfo.size || !data) {
             return [];
         }
 
-        return Array.from(analyticsCities.entries())
+        return Array.from(data.entries())
             .map(([cityId, analyticsCity]) => {
                 const cityInfo = citiesInfo.get(cityId)!;
                 const { city, population } = analyticsCity;
@@ -84,7 +86,7 @@ export default function CalcProductPage() {
                 };
             })
             .filter(notUndefined);
-    }, [analyticsCities, citiesInfo, pid]);
+    }, [citiesInfo, data, pid]);
 
     useEffect(() => {
         if (isSSR) {
@@ -97,16 +99,23 @@ export default function CalcProductPage() {
             const cities = await dataStorage.loadCities();
             setCitiesInfo(cities);
         })();
-        (async () => {
-            if (analyticsCities.size) {
-                return;
-            }
-            const cities = await dataStorage.loadAnalyticsCities();
-            setAnalyticsCities(cities);
-        })();
-    }, [analyticsCities.size, citiesInfo.size, dataStorage, isSSR]);
+        // (async () => {
+        //     if (analyticsCities.size) {
+        //         return;
+        //     }
+        //     const cities = await dataStorage.loadAnalyticsCities();
+        //     setAnalyticsCities(cities);
+        // })();
+    }, [citiesInfo.size, dataStorage, isSSR]);
 
-    if (!citiesInfo.size || !analyticsCities.size) {
+    useEffect(() => {
+        if (!isLoading && data) {
+            dataStorage.setAnalyticsCities(data);
+        }
+    }, [isLoading, data, dataStorage]);
+
+    if (error) return <div>failed to load</div>;
+    if (!citiesInfo.size || isLoading) {
         return <CircularProgress color="warning" aria-label="Загружаем..." />;
     }
 
@@ -127,7 +136,7 @@ export default function CalcProductPage() {
             <BmTable
                 columns={columnsRetailProductTable}
                 items={items}
-                renderCell={renderCell}
+                renderCell={RenderCell}
                 rowKey="cityId"
                 sorter={sortRetailProductTable}
                 defaultSort={defaultSortRetailCityTable}
@@ -136,12 +145,15 @@ export default function CalcProductPage() {
     );
 }
 
-const renderCell: BmTableProps<RetailProductTableRow>["renderCell"] = (row, columnKey) => {
+const RenderCell: BmTableProps<RetailProductTableRow>["renderCell"] = (row, columnKey) => {
+    const { dataStorage } = useDataStorage();
     const cellValue = row[columnKey];
 
     switch (columnKey) {
         case "city": {
-            const country = BM_COUNTRIES.find(({ cities }) => cities.some(({ id: cityId }) => cityId === row.cityId));
+            const country = dataStorage.countries.find(({ cities }) =>
+                cities.some(({ id: cityId }) => cityId === row.cityId)
+            );
 
             return (
                 <div className="flex flex-row gap-2 items-center ">
