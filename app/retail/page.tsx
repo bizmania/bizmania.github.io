@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { CircularProgress } from "@nextui-org/react";
 import useSWR from "swr";
@@ -17,10 +17,12 @@ import { hrefCityRetailPage, hrefProductRetailPage } from "@/shared/urls";
 export default function CalcPage() {
     const { dataStorage } = useDataStorage();
     const { data, error, isLoading } = useSWR<AnalyticsCity[]>(URL_ANALYTICS_CITIES, fetcher);
+    const [, rerender] = useState(0);
 
     useEffect(() => {
         if (!isLoading && data) {
             dataStorage.setAnalyticsCities(data);
+            rerender(prev => prev + 1);
         }
     }, [isLoading, data, dataStorage]);
 
