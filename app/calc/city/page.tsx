@@ -24,6 +24,7 @@ import { title } from "@/components/primitives";
 import { URL_ANALYTICS_CITIES, useDataStorage } from "@/shared/data/DataStorage";
 import { AnalyticsCity } from "@/shared/data/interfaces";
 import { fetcher } from "@/shared/fetcher";
+import { notUndefined } from "@/shared/helpers/filters";
 import { BM_PRODUCTS } from "@/shared/products";
 import { COUNTRY_IMAGE_SRC, PRODUCT_IMAGE_SRC, hrefProductCalcPage } from "@/shared/urls";
 
@@ -46,27 +47,33 @@ export default function CalcCityPage() {
             return [];
         }
         const { cityProducts } = calcData.find(({ city: { id: cityId } }) => cityId === cid)!;
-        return cityProducts.map(cityProduct => {
-            const {
-                total: {
-                    produce: { price = 0 },
-                    price: { retail = 0, vendor = 0 },
-                },
-                productId,
-            } = cityProduct;
-            const { type, title } = BM_PRODUCTS.find(({ id }) => id === productId)!;
+        return cityProducts
+            .map(cityProduct => {
+                const {
+                    total: {
+                        produce: { price = 0 },
+                        price: { retail = 0, vendor = 0 },
+                    },
+                    productId,
+                } = cityProduct;
+                const product = BM_PRODUCTS.find(({ id }) => id === productId);
+                if (!product) {
+                    return;
+                }
+                const { type, title } = product;
 
-            return {
-                productId,
-                type,
-                product: title,
-                price,
-                priceVendor: !price || !vendor ? 0 : ~~((10000 * (vendor - price)) / price) / 100,
-                vendor,
-                vendorRetail: !price || !retail ? 0 : ~~((10000 * (retail - vendor)) / vendor) / 100,
-                retail,
-            };
-        });
+                return {
+                    productId,
+                    type,
+                    product: title,
+                    price,
+                    priceVendor: !price || !vendor ? 0 : ~~((10000 * (vendor - price)) / price) / 100,
+                    vendor,
+                    vendorRetail: !price || !retail ? 0 : ~~((10000 * (retail - vendor)) / vendor) / 100,
+                    retail,
+                };
+            })
+            .filter(notUndefined);
     }, [calcData, cid]);
 
     const sortedItems = useMemo(() => sortCalcCityTable(items, sortDescriptor), [items, sortDescriptor]);
