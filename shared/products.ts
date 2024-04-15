@@ -22,7 +22,6 @@ export const BM_CATEGORIES_RETAIL = [...BM_CATEGORIES, { id: 99, title: "Рес�
 
 export const BM_PRODUCTS = [
     { id: 159, type: "car", title: "Автомобиль", categoryId: 19 },
-    { id: 375, type: "battery", title: "Аккумулятор", categoryId: 19 },
     { id: 398, type: "accessories", title: "Аксессуары", categoryId: 19 },
     { id: 399, type: "jack", title: "Домкрат", categoryId: 19 },
     { id: 383, type: "quadbike", title: "Квадроцикл", categoryId: 19 },
@@ -88,19 +87,16 @@ export const BM_PRODUCTS = [
     //
     { id: 207, type: "blouse", title: "Блузка", categoryId: 18 },
     { id: 396, type: "jeans", title: "Джинсы", categoryId: 18 },
-    { id: 138, type: "womanshoes", title: "Женская обувь", categoryId: 18 },
+    { id: 138, type: "womanshoes", title: "Туфли", categoryId: 18 },
     { id: 204, type: "suit", title: "Костюм", categoryId: 18 },
     { id: 203, type: "jacket", title: "Куртка", categoryId: 18 },
-    { id: 137, type: "manshoes", title: "Мужская обувь", categoryId: 18 },
+    { id: 137, type: "manshoes", title: "Ботинки", categoryId: 18 },
     { id: 326, type: "socks", title: "Носки", categoryId: 18 },
     { id: 206, type: "mancoat", title: "Пальто", categoryId: 18 },
     { id: 149, type: "gloves", title: "Перчатки", categoryId: 18 },
     { id: 208, type: "dress", title: "Платье", categoryId: 18 },
     { id: 148, type: "belt", title: "Ремень", categoryId: 18 },
     { id: 205, type: "shirt", title: "Рубашка", categoryId: 18 },
-    { id: 140, type: "sportshoes", title: "Спортивная обувь", categoryId: 18 },
-    { id: 145, type: "sportclothes", title: "Спортивная одежда", categoryId: 18 },
-    { id: 147, type: "bag", title: "Сумка", categoryId: 18 },
     { id: 395, type: "tshirt", title: "Футболка", categoryId: 18 },
     { id: 397, type: "cap", title: "Шапка", categoryId: 18 },
     { id: 210, type: "furcoat", title: "Шуба", categoryId: 18 },
@@ -134,7 +130,6 @@ export const BM_PRODUCTS = [
     { id: 405, type: "tights", title: "Колготки", categoryId: 20 },
     { id: 382, type: "makeup", title: "Косметика", categoryId: 20 },
     { id: 170, type: "parfume", title: "Парфюмерия", categoryId: 20 },
-    { id: 322, type: "sunglasses", title: "Солнечные очки", categoryId: 20 },
     { id: 347, type: "souvenir", title: "Сувенир", categoryId: 20 },
     { id: 403, type: "hairdryer", title: "Фен", categoryId: 20 },
     { id: 402, type: "flowers", title: "Цветы", categoryId: 20 },
@@ -142,6 +137,7 @@ export const BM_PRODUCTS = [
     { id: 166, type: "jewelry", title: "Ювелирные украшения", categoryId: 20 },
     { id: 437, type: "aroma", title: "Арома-палочки", categoryId: 20 },
     { id: 438, type: "massager", title: "Массажер", categoryId: 20 },
+    { id: 147, type: "bag", title: "Сумка", categoryId: 20 },
     //
     { id: 90, type: "wine", title: "Вино", categoryId: 5 },
     { id: 84, type: "yogurt", title: "Йогурт", categoryId: 5 },
@@ -185,7 +181,7 @@ export const BM_PRODUCTS = [
     // { id: 313, type: "vegetables", title: "Овощи", categoryId: 4 },
     { id: 56, type: "fish", title: "Рыба", categoryId: 4 },
     { id: 260, type: "beet", title: "Свекла", categoryId: 4 },
-    { id: 312, type: "fruits", title: "Тропические фрукты", categoryId: 4 },
+    { id: 312, type: "fruits", title: "Фрукты", categoryId: 4 },
     { id: 250, type: "apples", title: "Яблоки", categoryId: 4 },
     { id: 72, type: "eggs", title: "Яйца", categoryId: 4 },
     { id: 440, type: "carrot", title: "Морковь", categoryId: 4 },
@@ -205,7 +201,7 @@ export const BM_PRODUCTS = [
     { id: 355, type: "rubberboat", title: "Резиновая лодка", categoryId: 17 },
     { id: 359, type: "roller", title: "Роликовые коньки", categoryId: 17 },
     { id: 354, type: "backpack", title: "Рюкзак", categoryId: 17 },
-    { id: 360, type: "kickscooter", title: "Самокат", categoryId: 17 },
+    { id: 360, type: "kickscooter", title: "Электросамокат", categoryId: 17 },
     { id: 353, type: "sleeping", title: "Спальный мешок", categoryId: 17 },
     { id: 415, type: "thermos", title: "Термос", categoryId: 17 },
     { id: 356, type: "axe", title: "Топор", categoryId: 17 },
@@ -214,13 +210,16 @@ export const BM_PRODUCTS = [
     { id: 406, type: "helmet", title: "Шлем", categoryId: 17 },
     { id: 443, type: "rod", title: "Удочка", categoryId: 17 },
     { id: 444, type: "nutrition", title: "Спортивное питание", categoryId: 17 },
+    { id: 140, type: "sportshoes", title: "Кросовки", categoryId: 17 },
+    { id: 145, type: "sportclothes", title: "Спортивная одежда", categoryId: 17 },
+    { id: 322, type: "sunglasses", title: "Солнечные очки", categoryId: 17 },
     //
     { id: 244, type: "tools", title: "Инструменты", categoryId: 7 },
     { id: 173, type: "concrete", title: "Бетонный блок", categoryId: 7 },
     { id: 323, type: "door", title: "Дверь", categoryId: 7 },
     { id: 324, type: "tile", title: "Керамическая плитка", categoryId: 7 },
     { id: 172, type: "brick", title: "Кирпич", categoryId: 7 },
-    { id: 348, type: "glue", title: "Клей", categoryId: 7 },
+    { id: 348, type: "glue", title: "Герметик", categoryId: 7 },
     { id: 32, type: "paint", title: "Краска", categoryId: 7 },
     { id: 419, type: "fasteners", title: "Крепеж", categoryId: 7 },
     { id: 240, type: "floor", title: "Напольные покрытия", categoryId: 7 },
@@ -236,6 +235,7 @@ export const BM_PRODUCTS = [
     { id: 447, type: "fittings", title: "Фурнитура", categoryId: 7 },
     { id: 448, type: "plaster", title: "Штукатурка", categoryId: 7 },
     { id: 449, type: "mirror", title: "Зеркало", categoryId: 7 },
+    { id: 374, type: "conditioning", title: "Кондиционер", categoryId: 7 },
     //
     { id: 150, type: "umbrella", title: "Зонт", categoryId: 6 },
     { id: 108, type: "toothpaste", title: "Зубная паста", categoryId: 6 },
@@ -244,7 +244,7 @@ export const BM_PRODUCTS = [
     { id: 408, type: "kitchen", title: "Кухонный гарнитур", categoryId: 6 },
     { id: 107, type: "detergent", title: "Моющее средство", categoryId: 6 },
     { id: 105, type: "soap", title: "Мыло", categoryId: 6 },
-    { id: 131, type: "sofa", title: "Мягкая мебель", categoryId: 6 },
+    { id: 131, type: "sofa", title: "Диван", categoryId: 6 },
     { id: 319, type: "beddress", title: "Постельные принадлежности", categoryId: 6 },
     { id: 153, type: "dishes", title: "Посуда", categoryId: 6 },
     { id: 373, type: "cleaner", title: "Пылесос", categoryId: 6 },
@@ -259,6 +259,8 @@ export const BM_PRODUCTS = [
     { id: 452, type: "casserole", title: "Кастрюля", categoryId: 6 },
     { id: 454, type: "towel", title: "Полотенце", categoryId: 6 },
     { id: 463, type: "coffeemachine", title: "Кофемашина", categoryId: 6 },
+    { id: 375, type: "battery", title: "Батарейка", categoryId: 6 },
+    { id: 113, type: "iron", title: "Утюг", categoryId: 6 },
     //
     { id: 344, type: "antibiotics", title: "Антибиотики", categoryId: 16 },
     { id: 416, type: "antiseptic", title: "Антисептик", categoryId: 16 },
@@ -283,10 +285,9 @@ export const BM_PRODUCTS = [
     { id: 409, type: "hob", title: "Варочная панель", categoryId: 11 },
     { id: 410, type: "hood", title: "Вытяжка", categoryId: 11 },
     { id: 318, type: "xbox", title: "Игровая приставка", categoryId: 11 },
-    { id: 374, type: "conditioning", title: "Кондиционер", categoryId: 11 },
     { id: 381, type: "foodprocessor", title: "Кухонный комбайн", categoryId: 11 },
     { id: 316, type: "microwave", title: "Микроволновка", categoryId: 11 },
-    { id: 129, type: "mobile", title: "Мобильный телефон", categoryId: 11 },
+    { id: 129, type: "smartphone", title: "Смартфон", categoryId: 11 },
     { id: 125, type: "computer", title: "Настольный компьютер", categoryId: 11 },
     { id: 371, type: "headphones", title: "Наушники", categoryId: 11 },
     { id: 126, type: "notebook", title: "Ноутбук", categoryId: 11 },
@@ -296,7 +297,6 @@ export const BM_PRODUCTS = [
     { id: 372, type: "smartwatch", title: "Смарт часы", categoryId: 11 },
     { id: 111, type: "washer", title: "Стиральная машина", categoryId: 11 },
     { id: 115, type: "tv", title: "Телевизор", categoryId: 11 },
-    { id: 113, type: "iron", title: "Утюг", categoryId: 11 },
     { id: 151, type: "photo", title: "Фотоаппарат", categoryId: 11 },
     { id: 110, type: "refrigirator", title: "Холодильник", categoryId: 11 },
     { id: 456, type: "satellite", title: "Спутниковое оборудование", categoryId: 11 },
@@ -447,7 +447,7 @@ export const BM_CATEGORY_RETAIL_PRODUCTS = BM_CATEGORIES_RETAIL.reduce((acc, cat
     return acc;
 }, [] as BmCategoryProducts[]);
 
-// const src = ""; // from productComboInit @ https://bizmania.ru/units/produce/calculator/
+// const src = []; // from productComboInit @ https://bizmania.ru/units/produce/calculator/
 // const converted = [];
 // for(let i = 0; i < src.length; i += 4) {
 //     converted.push({
@@ -460,3 +460,7 @@ export const BM_CATEGORY_RETAIL_PRODUCTS = BM_CATEGORIES_RETAIL.reduce((acc, cat
 // const dst = [...BM_PRODUCTS_RETAIL];
 // console.log(dst.filter(item => !converted.find(i => i.id === item.id)));
 // console.log(converted.filter(item => !dst.find(i => i.id === item.id)));
+// console.log(converted.filter(item => {
+//     const dstItem = dst.find(i => i.id === item.id);
+//     return dstItem && (dstItem.title !== item.title || dstItem.type !== item.type || dstItem.categoryId !== item.categoryId);
+// }));
