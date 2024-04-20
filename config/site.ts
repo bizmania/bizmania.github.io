@@ -16,6 +16,10 @@ export const siteConfig = {
             label: "Розница",
             href: "/retail",
         },
+        {
+            label: "Плагин",
+            href: "/plugin/bm-userscript.user.js",
+        },
     ],
     navMenuItems: [
         {
@@ -25,6 +29,10 @@ export const siteConfig = {
         {
             label: "Розница",
             href: "/retail",
+        },
+        {
+            label: "Плагин",
+            href: "/plugin/bm-userscript.user.js",
         },
     ],
     links: {
