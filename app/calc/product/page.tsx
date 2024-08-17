@@ -51,15 +51,18 @@ export default function CalcProductPage() {
             return [];
         }
         return calcData.map(({ city, cityProducts }) => {
-            const { total } = cityProducts.find(({ productId }) => productId === pid) ?? {};
+            const { costs, total } = cityProducts.find(({ productId }) => productId === pid) ?? {};
             const {
                 produce: { price = 0 },
                 price: { retail = 0, vendor = 0 },
             } = total ?? { produce: {}, price: {} };
 
+            const salary = costs?.find(({ title }) => title === "Заработная плата работников")?.percent ?? 0;
+
             return {
                 cityId: city.id,
                 city: city.title,
+                salary,
                 price,
                 priceVendor: !price || !vendor ? 0 : ~~((10000 * (vendor - price)) / price) / 100,
                 vendor,
@@ -168,6 +171,7 @@ const RenderCell = (row: CalcProductTableRow, columnKey: React.Key) => {
                 />
             );
 
+        case "salary":
         case "priceVendor":
         case "vendorRetail":
             if (!cellValue) {

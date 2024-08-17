@@ -54,6 +54,7 @@ export default function CalcCityPage() {
                         produce: { price = 0 },
                         price: { retail = 0, vendor = 0 },
                     },
+                    costs,
                     productId,
                 } = cityProduct;
                 const product = BM_PRODUCTS.find(({ id }) => id === productId);
@@ -62,8 +63,11 @@ export default function CalcCityPage() {
                 }
                 const { type, title } = product;
 
+                const salary = costs.find(({ title }) => title === "Заработная плата работников")?.percent ?? 0;
+
                 return {
                     productId,
+                    salary,
                     type,
                     product: title,
                     price,
@@ -179,6 +183,7 @@ const renderCell = (row: CalcCityTableRow, columnKey: React.Key) => {
                 />
             );
 
+        case "salary":
         case "priceVendor":
         case "vendorRetail":
             if (!cellValue) {

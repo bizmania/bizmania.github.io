@@ -3,6 +3,7 @@ import { SortDescriptor } from "@nextui-org/react";
 export interface CalcProductTableRow {
     cityId: number;
     city: string;
+    salary: number;
     price: number;
     priceVendor: number;
     vendor: number;
@@ -39,6 +40,7 @@ export type CalcProductTableColumn = {
 
 export const columnsCalcProductTable: CalcProductTableColumn[] = [
     { name: "Город", uid: "city", sortable: true, align: "start" },
+    { name: "Доля ЗП", uid: "salary", sortable: true, align: "end" },
     { name: "Себестоимость", uid: "price", sortable: true, align: "end" },
     { name: "⬅️➡️", uid: "priceVendor", sortable: true, align: "end" },
     { name: "Оптовая", uid: "vendor", sortable: true, align: "end" },
